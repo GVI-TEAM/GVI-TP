@@ -2,12 +2,16 @@
 Application principale FastAPI pour la gestion des réservations de salles.
 """
 from fastapi import FastAPI
+from app.salles.controller import router as salles_router
 
 app = FastAPI(
     title="API Gestion Réservations de Salles",
     description="API REST pour gérer les réservations de salles dans un établissement",
     version="1.0.0"
 )
+
+# Inclusion des routes
+app.include_router(salles_router, prefix="/api/v1", tags=["salles"])
 
 @app.get("/")
 async def root():
