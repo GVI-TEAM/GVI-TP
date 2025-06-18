@@ -37,7 +37,8 @@ In the top right corner, click your user icon and go to
 "My Account" -> "Security".
 
 Generate a new user token named `sonar_scan`.\
-Create a `.env` file with the line:
+copy the `.env.example` in `.env` and fill it whit the lines:
 ```
 SONAR_TOKEN=<your-token>
+SONAR_HOST_URL=http://localhost:9000
 ``` 

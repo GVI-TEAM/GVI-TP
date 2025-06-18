@@ -16,4 +16,4 @@ fi
 
 # Run sonar-scanner with the token from .env
 echo "Running sonar-scanner with token from .env file..."
-sonar-scanner -Dsonar.token=$SONAR_TOKEN "$@"
+sonar-scanner -Dsonar.token=$SONAR_TOKEN -Dsonar.host.url=$SONAR_HOST_URL"$@"
