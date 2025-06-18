@@ -17,6 +17,10 @@ podman machine start
 https://docs.sonarsource.com/sonarqube-server/10.8/analyzing-source-code/scanners/sonarscanner/
 
 ## First start
+
+Start the Sonarqube container and associated database
+`podman-compose up -d`
+
 By default, sonarqube run with the account
 ```
 username: admin
