@@ -1,29 +1,14 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.log
-.git/
-.mypy_cache/
-.pytest_cache/
-.hypothesis/
-instance/
-.webassets-cache
-database.db
-*.db
-.DS_Store
+*.py[cod]
+*$py.class
+
+# Environments
 .env
-.env.local
+.venv
+
+# Project specific
+*.db
+
+data/
+alembic/versions/
