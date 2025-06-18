@@ -1,10 +1,7 @@
 name: Test, Build and Release
 
 on:
-  pull_request:
-    branches:
-      - develop
-    types: [opened, synchronize, reopened]
+  push:
 
 jobs:
   quality-gate:
