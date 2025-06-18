@@ -1,5 +1,5 @@
 """
-Schémas Pydantic pour les réservations.
+Schémas Pydantic pour les réservations - v1.1.0
 """
 from typing import Optional
 from datetime import date, time
@@ -11,6 +11,7 @@ class ReservationBase(BaseModel):
     date: date
     heure: time
     utilisateur: str
+    commentaire: Optional[str] = None
 
 class ReservationCreate(ReservationBase):
     """Schéma pour la création d'une réservation."""
@@ -21,6 +22,7 @@ class ReservationUpdate(BaseModel):
     date: Optional["date"] = None
     heure: Optional["time"] = None
     utilisateur: Optional[str] = None
+    commentaire: Optional[str] = None
 
 class ReservationResponse(ReservationBase):
     """Schéma de réponse pour une réservation avec ID."""
