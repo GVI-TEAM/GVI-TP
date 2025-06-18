@@ -8,7 +8,7 @@ from app.reservations.controller import router as reservations_router
 app = FastAPI(
     title="API Gestion Réservations de Salles",
     description="API REST pour gérer les réservations de salles dans un établissement",
-    version="1.0.0"
+    version="1.1.0"
 )
 
 # Inclusion des routes
@@ -20,7 +20,7 @@ async def root():
     """Point d'entrée de l'API"""
     return {
         "message": "API Gestion Réservations de Salles",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "status": "active"
     }
 
