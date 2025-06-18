@@ -1,0 +1,24 @@
+"""
+Application principale FastAPI pour la gestion des réservations de salles.
+"""
+from fastapi import FastAPI
+
+app = FastAPI(
+    title="API Gestion Réservations de Salles",
+    description="API REST pour gérer les réservations de salles dans un établissement",
+    version="1.0.0"
+)
+
+@app.get("/")
+async def root():
+    """Point d'entrée de l'API"""
+    return {
+        "message": "API Gestion Réservations de Salles",
+        "version": "1.0.0",
+        "status": "active"
+    }
+
+@app.get("/health")
+async def health_check():
+    """Point de contrôle de santé de l'API"""
+    return {"status": "healthy"}
