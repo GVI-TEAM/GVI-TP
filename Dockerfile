@@ -2,7 +2,7 @@
 FROM python:3.11-slim
 
 # Installer curl pour les healthchecks
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /app
