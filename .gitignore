@@ -13,6 +13,12 @@ sonarqube/
 env/
 venv/
 
-# Python cache files
-*__pycache__/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
+# Project specific
+*.db
+data/
+alembic/versions/
