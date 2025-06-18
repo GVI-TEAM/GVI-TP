@@ -1,4 +1,18 @@
 # Sonarqube folders
 .scannerwork/
 
+# .env file
 .env
+
+# Docker volumes
+sonarqube/
+
+# Python virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# Python cache files
+*__pycache__/
+
