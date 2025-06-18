@@ -1,0 +1,4 @@
+# Sonarqube folders
+.scannerwork/
+
+.env

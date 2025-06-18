@@ -23,14 +23,17 @@ username: admin
 password: admin
 ```
 
-When connecting with admin, you will have to update your password. We recommend to use:
+When connecting with admin, you will be asked to update your password. We recommend to use:
 ```
 username: admin
 password: Ig2i-CI-son@rQube
 ```
 
 In the top right corner, click your user icon and go to
-"My Account" → "Security".
+"My Account" -> "Security".
 
-Generate a new user token named `sonar_scan`
-Update 
+Generate a new user token named `sonar_scan`.\
+Create a `.env` file with the line:
+```
+SONAR_TOKEN=<your-token>
+``` 
