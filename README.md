@@ -1,110 +1,175 @@
-# GVI-TP
+# API Gestion Réservations de Salles
 
-## 🌟 Objectif général
+## 📋 Description
 
-Vous devez concevoir en équipe une API REST permettant de gérer des **réservations de salles** dans un établissement.
+API REST pour gérer les réservations de salles dans un établissement. Cette application implémente un système de gestion avec les fonctionnalités suivantes :
 
-Ce projet met en œuvre :
+- **Gestion des salles** : CRUD complet (création, lecture, mise à jour, suppression)
+- **Gestion des réservations** : Création et consultation avec gestion des conflits
+- **Filtrage intelligent** : Recherche par disponibilité des salles
+- **Architecture robuste** : Tests d'intégration, migrations de base de données, documentation API
 
-* le versioning de code via **Git Flow**
-* le **versionnement sémantique** des livraisons
-* les **pull requests** et **revues de code**
-* les **tests unitaires**
-* la création de **releases GitHub**
+## 🏗️ Architecture
 
-Les groupes sont totalement autonomes dans leur organisation, mais la **parallélisation des tâches** est une compétence clé évaluée dans ce TP.
+### Stack Technique
 
----
+- **Framework** : FastAPI 0.104.1
+- **Base de données** : SQLite avec SQLAlchemy 2.0.23
+- **Migrations** : Alembic 1.13.0
+- **Tests** : Pytest 7.4.3
+- **Documentation** : Générée automatiquement par FastAPI (Swagger et ReDoc)
 
-## 🔧 Étape 1 – MVP (`v1.0.0`)
+### Structure du Projet
 
-Votre objectif est de livrer une première version fonctionnelle de l’API en **1 heure maximum**.
+```
+GVI-TP/
+├── app/
+│   ├── core/                # Configuration base de données et modèles
+│   ├── database/            # Initialisation DB
+│   ├── reservations/        # Module de réservations (controller, schema, service)
+│   ├── salles/              # Module de salles (controller, schema, service)
+│   └── main.py              # Point d'entrée de l'application
+├── tests/                   # Tests d'intégration
+├── alembic/                 # Migrations de base de données
+├── data/                    # Données SQLite
+└── run.py                   # Script de démarrage
+```
 
-### Fonctionnalités attendues :
+## 🚀 Installation et Démarrage
 
-1. **Gestion des salles**
+### Prérequis
 
-   * Création, consultation, modification, suppression
-   * Champs : nom, capacité, localisation
+- Python 3.9+
+- pip ou poetry
 
-2. **Réservation**
+### Installation
 
-   * Création et consultation de réservations
-   * Réservation sur une salle donnée, un jour et une heure précise (durée = 1h fixe)
-   * Un utilisateur est associé à chaque réservation
+```bash
+# Cloner le repository
+git clone <url-du-repo>
+cd GVI-TP
 
-3. **Contrainte métier**
+# Créer et activer l'environnement virtuel
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# ou .venv\Scripts\activate  # Windows
 
-   * Une salle ne peut pas être réservée plusieurs fois sur le même créneau horaire
+# Installer les dépendances
+pip install -r requirements.txt
 
-### Contraintes :
+# Initialiser la base de données (si utilisation d'alembic)
+alembic upgrade head
+```
 
-* Base de données SQLite (SQLAlchemy + Alembic)
-* Tests unitaires minimum
-* Une première **release GitHub `v1.0.0`** est attendue à l’issue du MVP
+### Démarrage Rapide
 
----
+```bash
+# Option 1: Utiliser le script run.py
+python run.py
 
-## 🧩 Étape 2 – Lot de fonctionnalités (`v1.1.0`)
+# Option 2: Démarrage manuel
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-Ajoutez **4 fonctionnalités simples et indépendantes**, pouvant être développées en parallèle.
+L'API sera accessible sur http://localhost:8000
 
-### Fonctionnalités proposées :
+### Documentation API
 
-1. Ajouter un champ `disponible` (booléen) sur les salles
-2. Permettre de filtrer les salles par disponibilité (`GET /salles?disponible=true`)
-3. Ajouter la suppression de réservation (`DELETE /reservations/{id}`)
-4. Ajouter un champ `commentaire` (texte libre) dans les réservations
+- **Interface Swagger** : http://localhost:8000/docs
+- **ReDoc** : http://localhost:8000/redoc
 
-Une nouvelle **release GitHub `v1.1.0`** est attendue à la fin du lot.
-
----
-
-## 🥮 Tests attendus
-
-* Tests unitaires sur les fonctionnalités du MVP
-* Tests sur les 4 fonctionnalités du lot
-
----
-
-## 🔁 Git et collaboration
-
-* Utilisez **Git Flow** pour organiser les branches
-* Chaque fonctionnalité doit faire l’objet d’une **branche dédiée**
-* Toute intégration passe par une **pull request avec revue**
-* L’historique Git doit rester propre et structuré
-
----
-
-## 🚀 Releases
-
-* Une **release GitHub** est attendue pour chaque version stable :
-
-  * `v1.0.0` à la fin du MVP
-  * `v1.1.0` à la fin du lot 1
-* Un changelog minimal doit être inclus
-
----
-
-## 📊 Modèle de données
+## 📊 Modèle de Données
 
 ### Salle
 
-| Champ        | Type    | Description                      |
-| ------------ | ------- | -------------------------------- |
-| id           | UUID    | Identifiant unique               |
-| nom          | string  | Nom de la salle                  |
-| capacité     | integer | Nombre maximal de personnes      |
-| localisation | string  | Description ou code du bâtiment  |
-| disponible   | boolean | Optionnel (ajouté dans `v1.1.0`) |
+| Champ        | Type    | Description                 |
+| ------------ | ------- | --------------------------- |
+| id           | string  | Identifiant unique (UUID)   |
+| nom          | string  | Nom de la salle (unique)    |
+| capacite     | integer | Nombre maximal de personnes |
+| localisation | string  | Description du bâtiment     |
+| disponible   | boolean | État de disponibilité       |
 
 ### Réservation
 
-| Champ       | Type      | Description                           |
-| ----------- | --------- | ------------------------------------- |
-| id          | UUID      | Identifiant unique                    |
-| salle\_id   | UUID (FK) | Référence vers une salle              |
-| date        | date      | Date de la réservation                |
-| heure       | time      | Heure de début de la réservation (1h) |
-| utilisateur | string    | Identifiant ou nom de l’utilisateur   |
-| commentaire | string    | Optionnel (ajouté dans `v1.1.0`)      |
+| Champ       | Type   | Description                   |
+| ----------- | ------ | ----------------------------- |
+| id          | string | Identifiant unique (UUID)     |
+| salle_id    | string | Référence vers une salle (FK) |
+| date        | date   | Date de la réservation        |
+| heure       | time   | Heure de début                |
+| utilisateur | string | Nom de l'utilisateur          |
+
+## 🔌 API Endpoints
+
+### Salles
+
+- `GET /api/v1/salles` - Liste des salles (avec filtres)
+- `POST /api/v1/salles` - Créer une salle
+- `GET /api/v1/salles/{id}` - Détails d'une salle
+- `PUT /api/v1/salles/{id}` - Modifier une salle
+- `DELETE /api/v1/salles/{id}` - Supprimer une salle
+
+### Réservations
+
+- `GET /api/v1/reservations` - Liste des réservations
+- `POST /api/v1/reservations` - Créer une réservation
+- `GET /api/v1/reservations/{id}` - Détails d'une réservation
+- `GET /api/v1/reservations/salle/{salle_id}` - Réservations d'une salle
+
+### Filtres Disponibles
+
+- `GET /api/v1/salles?disponible=true` - Filtrer par disponibilité
+- `GET /api/v1/salles?skip=0&limit=10` - Pagination
+
+## 🧪 Tests
+
+```bash
+# Exécuter tous les tests
+pytest tests/ -v
+
+# Tests spécifiques
+pytest tests/test_salles.py -v
+pytest tests/test_reservations.py -v
+```
+
+### Couverture des Tests
+
+- ✅ Tests d'intégration API pour les salles
+- ✅ Tests d'intégration API pour les réservations
+- ✅ Tests de validation des contraintes métier (unicité des noms de salles, etc.)
+- ✅ Tests de gestion des erreurs
+
+## 🗄️ Base de Données
+
+### Migrations (si utilisation d'alembic)
+
+```bash
+# Créer une nouvelle migration
+alembic revision --autogenerate -m "Description du changement"
+
+# Appliquer les migrations
+alembic upgrade head
+```
+
+### Contraintes Métier
+
+- **Unicité** : Pas de doublons de noms de salles
+- **Intégrité** : Vérification de l'existence des salles lors des réservations
+- **Disponibilité** : Gestion de la disponibilité des salles
+
+## Débogage et Développement
+
+### Logs
+
+```bash
+# Logs détaillés
+uvicorn app.main:app --log-level debug
+
+# Logs des tests
+pytest tests/ -v -s
+```
+
+## 📄 Licence
+
+Ce projet est développé dans le cadre du TP GVI - Gestion de Versions et Intégration.
