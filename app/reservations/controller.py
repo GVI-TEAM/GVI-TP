@@ -72,3 +72,11 @@ def update_reservation(
         return updated_reservation
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.delete("/reservations/{reservation_id}", status_code=204)
+def delete_reservation(reservation_id: str, db: Session = Depends(get_db)):
+    """Supprime une réservation existante."""
+    success = ReservationService.delete_reservation(db=db, reservation_id=reservation_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Réservation non trouvée")
+    return

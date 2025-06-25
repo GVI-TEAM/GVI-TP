@@ -1,14 +1,24 @@
+# Sonarqube folders
+.scannerwork/
+
+# .env file
+.env
+
+# Docker volumes
+sonarqube/
+
+# Python virtual environments
+.env/
+.venv/
+env/
+venv/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Environments
-.env
-.venv
-
 # Project specific
 *.db
-
 data/
 alembic/versions/

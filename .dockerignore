@@ -1,0 +1,18 @@
+# Ignorer les données Docker
+.dockerignore
+
+# Volumes Docker
+docker-volumes/
+
+# Environnements virtuels
+.venv/
+
+# Base de données locale
+*.db
+
+# Fichiers de développement
+.git/
+.gitignore
+README.md
+DOCKER.md
+

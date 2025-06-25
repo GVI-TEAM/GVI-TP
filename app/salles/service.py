@@ -15,9 +15,12 @@ class SalleService:
         return db.query(Salle).filter(Salle.id == salle_id).first()
 
     @staticmethod
-    def get_salles(db: Session, skip: int = 0, limit: int = 100) -> List[Salle]:
-        """Récupère la liste des salles."""
-        return db.query(Salle).offset(skip).limit(limit).all()
+    def get_salles(db: Session, skip: int = 0, limit: int = 100, disponible: Optional[bool] = None) -> List[Salle]:
+        """Récupère la liste des salles avec filtrage optionnel par disponibilité."""
+        query = db.query(Salle)
+        if disponible is not None:
+            query = query.filter(Salle.disponible == disponible)
+        return query.offset(skip).limit(limit).all()
 
     @staticmethod
     def get_salle_by_nom(db: Session, nom: str) -> Optional[Salle]:

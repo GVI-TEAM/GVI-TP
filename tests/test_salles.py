@@ -7,7 +7,8 @@ def test_create_salle_api(client):
     salle_data = {
         "nom": "Salle API Test",
         "capacite": 30,
-        "localisation": "Bâtiment Test"
+        "localisation": "Bâtiment Test",
+        "disponible": True
     }
     
     response = client.post("/api/v1/salles", json=salle_data)
@@ -17,6 +18,7 @@ def test_create_salle_api(client):
     assert data["nom"] == salle_data["nom"]
     assert data["capacite"] == salle_data["capacite"]
     assert data["localisation"] == salle_data["localisation"]
+    assert data["disponible"] == salle_data["disponible"]
     assert "id" in data
 
 def test_create_duplicate_salle_api(client):
@@ -40,8 +42,8 @@ def test_get_salles_api(client):
     """Test de récupération des salles via API."""
     # Créer quelques salles
     salles_data = [
-        {"nom": "Salle 1", "capacite": 20, "localisation": "Test"},
-        {"nom": "Salle 2", "capacite": 30, "localisation": "Test"}
+        {"nom": "Salle 1", "capacite": 20, "localisation": "Test", "disponible": True},
+        {"nom": "Salle 2", "capacite": 30, "localisation": "Test", "disponible": False}
     ]
     
     for salle_data in salles_data:
@@ -54,23 +56,35 @@ def test_get_salles_api(client):
     assert len(data) == 2
 
 def test_get_salles_with_filter_api(client):
-    """Test de récupération des salles."""
+    """Test de récupération des salles avec filtre par disponibilité."""
     # Créer des salles
     salles_data = [
-        {"nom": "Salle 1", "capacite": 20, "localisation": "Test"},
-        {"nom": "Salle 2", "capacite": 30, "localisation": "Test"}
+        {"nom": "Salle Disponible", "capacite": 20, "localisation": "Test", "disponible": True},
+        {"nom": "Salle Indisponible", "capacite": 30, "localisation": "Test", "disponible": False}
     ]
     
     for salle_data in salles_data:
         client.post("/api/v1/salles", json=salle_data)
     
-    # Récupérer toutes les salles
-    response = client.get("/api/v1/salles")
+    # Filtrer par disponibilité
+    response_disponibles = client.get("/api/v1/salles?disponible=true")
+    response_indisponibles = client.get("/api/v1/salles?disponible=false")
     
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data) >= 2
-    assert isinstance(data, list)
+    assert response_disponibles.status_code == 200
+    assert response_indisponibles.status_code == 200
+    
+    data_disponibles = response_disponibles.json()
+    data_indisponibles = response_indisponibles.json()
+    
+    # Vérifier qu'on a au moins les salles créées
+    assert len(data_disponibles) >= 1
+    assert len(data_indisponibles) >= 1
+    
+    # Vérifier que le filtrage fonctionne
+    for salle in data_disponibles:
+        assert salle["disponible"] == True
+    for salle in data_indisponibles:
+        assert salle["disponible"] == False
 
 def test_get_salle_by_id_api(client):
     """Test de récupération d'une salle par ID."""
@@ -97,18 +111,19 @@ def test_get_nonexistent_salle_api(client):
 def test_update_salle_api(client):
     """Test de mise à jour d'une salle."""
     # Créer une salle
-    salle_data = {"nom": "Salle Update API", "capacite": 20, "localisation": "Test"}
+    salle_data = {"nom": "Salle Update API", "capacite": 20, "localisation": "Test", "disponible": True}
     response = client.post("/api/v1/salles", json=salle_data)
     created_salle = response.json()
     
     # Mettre à jour
-    update_data = {"nom": "Salle Modifiée", "capacite": 40}
+    update_data = {"nom": "Salle Modifiée", "capacite": 40, "disponible": False}
     response = client.put(f"/api/v1/salles/{created_salle['id']}", json=update_data)
     
     assert response.status_code == 200
     data = response.json()
     assert data["nom"] == "Salle Modifiée"
     assert data["capacite"] == 40
+    assert data["disponible"] == False
     assert data["localisation"] == "Test"  # Non modifié
 
 def test_delete_salle_api(client):
@@ -126,3 +141,18 @@ def test_delete_salle_api(client):
     # Vérifier qu'elle n'existe plus
     response = client.get(f"/api/v1/salles/{created_salle['id']}")
     assert response.status_code == 404
+
+def test_create_salle_default_disponible(client):
+    """Test que le champ disponible a la valeur par défaut True."""
+    salle_data = {
+        "nom": "Salle Default",
+        "capacite": 25,
+        "localisation": "Test"
+        # disponible non spécifié
+    }
+    
+    response = client.post("/api/v1/salles", json=salle_data)
+    
+    assert response.status_code == 201
+    data = response.json()
+    assert data["disponible"] == True  # Valeur par défaut

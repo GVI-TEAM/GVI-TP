@@ -159,3 +159,107 @@ def test_get_reservation_by_id_api(client):
     data = response.json()
     assert data["id"] == created_reservation["id"]
     assert data["utilisateur"] == "John Doe"
+
+# v1.1.0 Tests for new features
+
+def test_create_reservation_with_commentaire_api(client):
+    """Test de création d'une réservation avec commentaire - v1.1.0."""
+    # Créer une salle d'abord
+    salle_data = {"nom": "Salle Commentaire", "capacite": 20, "localisation": "Test"}
+    salle_response = client.post("/api/v1/salles", json=salle_data)
+    salle = salle_response.json()
+    
+    # Créer une réservation avec commentaire
+    reservation_data = {
+        "salle_id": salle["id"],
+        "date": "2025-06-25",
+        "heure": "14:00:00",
+        "utilisateur": "John Doe",
+        "commentaire": "Réunion équipe développement v1.1.0"
+    }
+    
+    response = client.post("/api/v1/reservations", json=reservation_data)
+    
+    assert response.status_code == 201
+    data = response.json()
+    assert data["commentaire"] == "Réunion équipe développement v1.1.0"
+
+def test_create_reservation_without_commentaire_api(client):
+    """Test de création d'une réservation sans commentaire - v1.1.0."""
+    # Créer une salle d'abord
+    salle_data = {"nom": "Salle Sans Commentaire", "capacite": 20, "localisation": "Test"}
+    salle_response = client.post("/api/v1/salles", json=salle_data)
+    salle = salle_response.json()
+    
+    # Créer une réservation sans commentaire
+    reservation_data = {
+        "salle_id": salle["id"],
+        "date": "2025-06-26",
+        "heure": "10:00:00",
+        "utilisateur": "Jane Smith"
+    }
+    
+    response = client.post("/api/v1/reservations", json=reservation_data)
+    
+    assert response.status_code == 201
+    data = response.json()
+    assert data["commentaire"] is None
+
+def test_update_reservation_commentaire_api(client):
+    """Test de mise à jour du commentaire d'une réservation - v1.1.0."""
+    # Créer une salle
+    salle_data = {"nom": "Salle Update Commentaire", "capacite": 20, "localisation": "Test"}
+    salle_response = client.post("/api/v1/salles", json=salle_data)
+    salle = salle_response.json()
+    
+    # Créer une réservation sans commentaire
+    reservation_data = {
+        "salle_id": salle["id"],
+        "date": "2025-06-27",
+        "heure": "09:00:00",
+        "utilisateur": "Bob Wilson"
+    }
+    response = client.post("/api/v1/reservations", json=reservation_data)
+    created_reservation = response.json()
+    
+    # Mettre à jour avec un commentaire
+    update_data = {"commentaire": "Mise à jour avec commentaire"}
+    response = client.put(f"/api/v1/reservations/{created_reservation['id']}", json=update_data)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["commentaire"] == "Mise à jour avec commentaire"
+
+def test_delete_reservation_api(client):
+    """Test de suppression d'une réservation - v1.1.0."""
+    # Créer une salle
+    salle_data = {"nom": "Salle Delete", "capacite": 20, "localisation": "Test"}
+    salle_response = client.post("/api/v1/salles", json=salle_data)
+    salle = salle_response.json()
+    
+    # Créer une réservation
+    reservation_data = {
+        "salle_id": salle["id"],
+        "date": "2025-06-28",
+        "heure": "15:00:00",
+        "utilisateur": "Alice Brown",
+        "commentaire": "Réservation à supprimer"
+    }
+    response = client.post("/api/v1/reservations", json=reservation_data)
+    created_reservation = response.json()
+    
+    # Supprimer la réservation
+    response = client.delete(f"/api/v1/reservations/{created_reservation['id']}")
+    
+    assert response.status_code == 204
+    
+    # Vérifier que la réservation n'existe plus
+    response = client.get(f"/api/v1/reservations/{created_reservation['id']}")
+    assert response.status_code == 404
+
+def test_delete_nonexistent_reservation_api(client):
+    """Test de suppression d'une réservation inexistante - v1.1.0."""
+    response = client.delete("/api/v1/reservations/nonexistent-id")
+    
+    assert response.status_code == 404
+    assert "Réservation non trouvée" in response.json()["detail"]

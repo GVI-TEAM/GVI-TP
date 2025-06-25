@@ -1,7 +1,7 @@
 """
-Contrôleur API pour la gestion des salles - MVP v1.0.0
+Contrôleur API pour la gestion des salles - v1.1.0
 """
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
@@ -27,10 +27,11 @@ def create_salle(
 def read_salles(
     skip: int = Query(0, ge=0, description="Nombre d'éléments à ignorer"),
     limit: int = Query(100, ge=1, le=1000, description="Nombre maximal d'éléments à retourner"),
+    disponible: Optional[bool] = Query(None, description="Filtrer par disponibilité"),
     db: Session = Depends(get_db)
 ):
-    """Récupère la liste des salles."""
-    salles = SalleService.get_salles(db, skip=skip, limit=limit)
+    """Récupère la liste des salles avec filtrage optionnel par disponibilité."""
+    salles = SalleService.get_salles(db, skip=skip, limit=limit, disponible=disponible)
     return salles
 
 @router.get("/salles/{salle_id}", response_model=SalleResponse)
